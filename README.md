@@ -1,2 +1,3 @@
 # mesh_2.0
-![Diagram](http://jgraph.github.io/drawio-github/diagram.png)
+![Diagram](https://github.com/AlverGant/mesh_2.0/blob/master/Mesh%202.0)
+
