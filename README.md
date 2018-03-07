@@ -1,17 +1,32 @@
 # High performance wireless mesh networks
 ## Combining inexpensive hardware (OpenWRT supported access points) with enterprise grade Ubiquiti airMAX equipment
 
-Mikrotik NAND flash devices can grow their bad block tables over time.
-When burning an OpenWRT image directly onto flash and, particularly if a micro SD card is inserted during the flashing operation, lots of false bad blocks do develop, eventually reaching a high percentage of the storage, rendering the device unusable, incapable even of returning it to RouterOS. It is somewhat unclear to me why this happens but the answer may lie in the electronics, maybe there is a timing issue on the bus which the CPU talks to the flash, that bus is shared with the SD card.
+This project aims to establish a medium scale (kilometer size) wireless mesh network capable of serving robust internet to video streaming clients. In order to maximize overall available bitrate to clients while keeping costs low, we propose to combine non-mesh enterprise grade equipment from Ubiquiti with inexpensive access-points capable of running OpenWRT linux.
 
-If that's your case like it was mine, here are the instructions to repair it.
+The backbone nodes will provide:
+```
+High speed connectivity to selected access-points with a point to multipoint  topology (PtMP)
+VLAN based traffic isolation between mesh and management traffic
+Will be "invisible" to mesh traffic
+```
 
-First you will need:
+The access points will provide:
 ```
-a TFTP and DHCP server with a network cable connected to ETH1/POE on RouterBoard
-a serial console access to the Mikrotik device
-a (supplied) OpenWRT ELF modified image capable of wiping out BBT (bad block table)
+Entrypoints to non-mesh clients such as cell phones, WiFi video streaming devices, etc.
+Seamless roaming to these non-mesh clients. They will be able to roam freely between access-points.
+Mesh routing to clients, traffic will be steered to the internet through a dynamically calculated highest throughput path
 ```
+
+One or more gateway nodes will provide:
+```
+Internet connectivity to non-mesh clients
+Smart queue management to reduce bufferbloat, minimizing response time to video services
+Adblocking to improve overall traffic efficiency
+Resilience through multiple gateways
+```
+
+
+
 
 ![Self-editing Diagram](https://github.com/AlverGant/mesh_2.0/blob/master/mesh_diagram.svg)
 
