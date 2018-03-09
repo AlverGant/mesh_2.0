@@ -10,7 +10,7 @@ function update_Ubuntu(){
         TODAY=$(date +%s)
         UPDATE_TIME=$(date +%s -r /var/cache/apt/pkgcache.bin)
         DELTA_TIME="$(echo "$TODAY - $UPDATE_TIME" | bc)"
-        if [ $DELTA_TIME -ge 100000 ]; then
+        if [ "$DELTA_TIME" -ge 100000 ]; then
                 sudo apt -y update
                 sudo apt -y upgrade
         fi
@@ -28,7 +28,7 @@ function install_Prerequisites(){
 function download_LEDE_source(){
 	cd "$install_dir" || error_exit "Installation directory cannot be found anymore, please git clone batman repo again"
 	git clone http://git.lede-project.org/source.git
-	cd source
+	cd source || error_exit "directory cannot be found anymore, please git clone batman repo again"
 	git fetch origin
 	git checkout "${lede_options[git_checkout_branch]}"
 	git pull
@@ -62,7 +62,7 @@ function downloadNodesTemplateConfigs(){
 }
 
 function substituteVariables(){
-	cd "$build_dir"/files
+	cd "$build_dir"/files || error_exit "Installation directory cannot be found anymore, please git clone batman repo again"
 	find . -type f -print0 | while IFS= read -r -d $'\0' files;
 	do
 		sed -i "s/\$radio0_disable/'${radio0_profile[${devicetype[$hostname]}]}'/g" "$files"
