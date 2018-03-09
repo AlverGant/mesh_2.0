@@ -6,6 +6,7 @@ function error_exit(){
 
 # Update ubuntu
 function update_Ubuntu(){
+	sudo apt install -y bc
         TODAY=$(date +%s)
         UPDATE_TIME=$(date +%s -r /var/cache/apt/pkgcache.bin)
         DELTA_TIME="$(echo "$TODAY - $UPDATE_TIME" | bc)"
@@ -20,7 +21,7 @@ function install_Prerequisites(){
 	sudo apt install -y autoconf bison build-essential ccache file flex \
 	g++ git gawk gettext git-core libncurses5-dev libnl-3-200 libnl-3-dev \
 	libnl-genl-3-200 libnl-genl-3-dev libssl-dev ncurses-term python \
-	quilt sharutils subversion texinfo unzip wget xsltproc zlib1g-dev bc
+	quilt sharutils subversion texinfo unzip wget xsltproc zlib1g-dev
 	sudo apt-get -y autoremove
 }
 
