@@ -10,5 +10,5 @@ ip link set mtu 1560 dev adhoc1
 /bin/sleep 1
 /usr/sbin/batctl if add adhoc1
 /bin/sleep 1
-/usr/sbin/batctl if add eth0.5
+/usr/sbin/batctl if add eth0.2
 exit 0
