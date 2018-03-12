@@ -1,0 +1,15 @@
+[Unit]
+Description=Alfred
+After=multi-user.target
+
+[Service]
+Type=idle
+WorkingDirectory=/opt
+ExecStart=/bin/bash -c '/opt/alfred.sh'
+Restart=always
+RestartSec=5
+StartLimitInterval=5000
+StartLimitBurst=0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=Topology visualization server
+After=multi-user.target
+
+[Service]
+Type=idle
+WorkingDirectory=/opt/graphviz-server/dist/
+ExecStart=/bin/bash -c '/opt/graphviz-server/dist/DotGraphics.sh'
+Restart=always
+RestartSec=5
+StartLimitInterval=5000
+StartLimitBurst=0
+
+[Install]
+WantedBy=multi-user.target
