@@ -52,7 +52,7 @@ config interface 'eth0'
         option ifname 'eth0'
         option mtu '1560'
 
-config interface 'wired_mesh_port_1'
+config interface 'wired_mesh_port'
         option ifname 'eth0.2'
         option mtu '1560'
         option proto 'none'
