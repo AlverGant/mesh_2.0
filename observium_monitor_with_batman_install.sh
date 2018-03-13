@@ -2,11 +2,11 @@
 # Author: Alvinho - DEPED
 # Tested on Ubuntu Server 14.04 Thrusty Tahr 64 bits
 # Alvaro Lopez Antelo
-# Script to configure a monitoring station for the batman-adv mesh network
-# Monitoring station has a wired interface for remote http access via NMS Observium
-# and another wired interface speaking batman-adv mesh protocol
-# This station is a batman-adv node as well
-# We monitor mesh nodes via SNMP and also use ALFRED as a master node to receive topology info
+# Script to configure a monitoring station for a batman-adv mesh network
+# The station has a wired interface for remote http access via Observium NMS
+# and another vlan sub-interface to speak mesh protocol and reach mesh nodes
+# We monitor mesh nodes via SNMP and the station also use ALFRED to receive topology info
+# from the mesh network
 
 # Update Ubuntu
 sudo apt -y update
@@ -47,9 +47,9 @@ byacc ethtool expect fping g++ gcc git graphviz htop imagemagick \
 ipmitool iw libapache2-mod-php7.0 libcap-dev libgps-dev libncurses5-dev \
 libnl-3-dev libnl-genl-3-dev libpcap-dev libreadline-dev make mtr-tiny \
 mysql-client openjdk-8-jre openssh-server php7.0-cli php7.0-gd php7.0-json \
-php7.0-mcrypt php7.0-mysql php-pear python-dev \
-python-mysqldb python-paste python-pastedeploy python-pip python-setuptools \
-python-twisted rrdtool snmp subversion unzip vim wget whois wireless-tools
+php7.0-mcrypt php7.0-mysql php-pear python-dev python-mysqldb python-paste \
+python-pastedeploy python-pip python-setuptools python-twisted rrdtool \
+snmp subversion unzip vim wget whois wireless-tools
 
 cd /home/$USER
 
@@ -80,9 +80,9 @@ cd /opt
 sudo git clone https://github.com/omerio/graphviz-server
 
 # Prepare for unatended MySQL Server installation - preassign root password to database server
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_root_user" | sudo debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_root_user" | sudo debconf-set-selections
-sudo apt-get -y install mysql-server-5.5
+echo "mysql-server-5.7 mysql-server/root_password password $mysql_root_user" | sudo debconf-set-selections
+echo "mysql-server-5.7 mysql-server/root_password_again password $mysql_root_user" | sudo debconf-set-selections
+sudo apt-get -y install mysql-server-5.7
 
 # Install Observium monitoring tool (latest community edition)
 sudo mkdir -p /opt/observium; cd /opt
@@ -124,12 +124,31 @@ sudo sed -i "s/#\$UDPServerRun 514/\$UDPServerRun 514/" /etc/rsyslog.conf
 sudo wget -c https://www.dropbox.com/s/z4840d23k7mkv9f/30-observium.conf -O /etc/rsyslog.d/30-observium.conf
 sudo service rsyslog restart
 
-# Remove now unnecessary package
-sudo apt-get purge -y expect
-
 # Create Observium directories and permissions
 cd /opt/observium && sudo mkdir logs && sudo mkdir rrd
 sudo chown www-data:www-data rrd && sudo chown www-data:www-data logs
+
+# Use expect to non-interactively create observium database and grant permissions to it's user
+CONFIGURE_MYSQL=$(expect -c "
+set timeout 10
+spawn mysql -u root -p
+expect \"Enter password:\"
+send \"$mysql_root_user\r\"
+expect \"mysql>\"
+send \"CREATE DATABASE observium DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;\r\"
+expect \"mysql>\"
+send \"GRANT ALL PRIVILEGES ON observium.* TO 'observium'@'localhost' IDENTIFIED BY 'observium';\r\"
+expect \"mysql>\"
+send \"flush privileges;\r\"
+expect \"mysql>\"
+send \"exit\r\"
+expect eof
+")
+echo "$CONFIGURE_MYSQL"
+
+# Remove now unnecessary package
+sudo apt-get purge -y expect
+sudo apt-get autoremove -y
 
 # Create Observium database schema
 cd /opt/observium && ./discovery.php -u
@@ -167,37 +186,19 @@ ServerName localhost
 END'
 
 # Edit PHP default timezone and GPS coordinates
-sudo sed -i 's/;date.timezone =.*/date.timezone = America\/Sao_Paulo/' /etc/php5/apache2/php.ini
-sudo sed -i 's/;date.default_latitude =.*/date.default_latitude = $gps_latitude/' /etc/php5/apache2/php.ini
-sudo sed -i 's/;date.default_longitude =.*/date.default_longitude = $gps_longitude/' /etc/php5/apache2/php.ini
+#sudo sed -i 's/;date.timezone =.*/date.timezone = America\/Sao_Paulo/' /etc/php5/apache2/php.ini
+#sudo sed -i 's/;date.default_latitude =.*/date.default_latitude = $gps_latitude/' /etc/php5/apache2/php.ini
+#sudo sed -i 's/;date.default_longitude =.*/date.default_longitude = $gps_longitude/' /etc/php5/apache2/php.ini
 
 # Enable mod_rewrite Apache module and restart Apache
 sudo a2dismod mpm_event && sudo a2enmod mpm_prefork && sudo a2enmod php7.0
 
 # Enable mod_rewrite Apache module and restart Apache
-sudo a2enmod rewrite && sudo apache2ctl restart && sudo service apache2 restart
+sudo a2enmod rewrite && sudo apache2ctl restart
+sudo service apache2 restart
 
 # Add observium admin user
 cd /opt/observium && ./adduser.php $observium_db_user $observium_db_pwd 10
-
-# Configure SNMP
-sudo service snmpd start && sudo update-rc.d snmpd enable
-
-# Add a cron.d job to run topology renderer at a 1 minute interval
-# add Observium SNMP and housekeeping services at recommended intervals
-sudo bash -c 'cat >> /etc/cron.d/batman-monitor << "END"
-*/1 * * * * root /usr/bin/python /opt/render_graphvis_dot_file.py
-# Run automated discovery of newly added devices every 5 minutes
-*/5 *     * * *   root    /opt/observium/discovery.php -h new >> /dev/null 2>&1
-# Run a complete discovery of all devices once every 6 hours
-33  */6   * * *   root    /opt/observium/discovery.php -h all >> /dev/null 2>&1
-# Run multithreaded poller wrapper every 5 minutes
-*/5 *     * * *   root    /opt/observium/poller-wrapper.py 4 >> /dev/null 2>&1
-# Run housekeeping script daily for syslog, eventlog and alert log
-13 5 * * * root /opt/observium/housekeeping.php -ysel >> /dev/null 2>&1
-# Run housekeeping script daily for rrds, ports, orphaned entries in the database and performance data
-47 4 * * * root /opt/observium/housekeeping.php -yrptb >> /dev/null 2>&1
-END'
 
 # Startup script for ALFRED
 sudo wget -c https://www.dropbox.com/s/vii9g1x6v5sce75/alfred.sh -O /opt/alfred.sh
@@ -218,7 +219,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable graphvis.service
 
 # Startup configuration for batman-adv interfaces
-sudo bash -c 'cat >> /etc/init.d/rc.local << "END_RCLOCAL"
+sudo bash -c 'cat > /etc/rc.local << "END_RCLOCAL"
 echo "Starting batman-adv mesh"
 # Configure batman_iface batman interface as ADHOC, MTU to support batman and promiscuous mode
 /sbin/ifconfig batman_iface down
@@ -243,3 +244,18 @@ else
 	sudo sed -i "s/BATMAN_PROTOCOL/BATMAN_IV/" /etc/rc.local
 fi
 
+# Add a cron.d job to run topology renderer at a 1 minute interval
+# add Observium SNMP and housekeeping services at recommended intervals
+sudo bash -c 'cat >> /etc/cron.d/batman-monitor << "END"
+*/1 * * * * root /usr/bin/python /opt/render_graphvis_dot_file.py
+# Run automated discovery of newly added devices every 5 minutes
+*/5 *     * * *   root    /opt/observium/discovery.php -h new >> /dev/null 2>&1
+# Run a complete discovery of all devices once every 6 hours
+33  */6   * * *   root    /opt/observium/discovery.php -h all >> /dev/null 2>&1
+# Run multithreaded poller wrapper every 5 minutes
+*/5 *     * * *   root    /opt/observium/poller-wrapper.py 4 >> /dev/null 2>&1
+# Run housekeeping script daily for syslog, eventlog and alert log
+13 5 * * * root /opt/observium/housekeeping.php -ysel >> /dev/null 2>&1
+# Run housekeeping script daily for rrds, ports, orphaned entries in the database and performance data
+47 4 * * * root /opt/observium/housekeeping.php -yrptb >> /dev/null 2>&1
+END'
