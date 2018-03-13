@@ -1,0 +1,26 @@
+PENDENCIAS
+
+
+
+VM com OPENWRT batman para gateway
+VM com Observium batman-adv no Ubuntu 16 Xenial
+
+
+x86 com 2 x LAN para gateway x86 (desktop)
+x86 com 1 x LAN para observium (monitoração mesh e Ubiquiti por VLAN)
+
+Transformar NanoBeam AC em AP
+
+Switch com MTU >= 1560 e VLAN (interconexão observium, gateway e Ubiquiti AP)
+
+3 x TP-Links dual band para mesh
+
+Configurações
+    Portas LAN mesh para WR740 e WR1043
+
+
+Testes
+    Funcionamento basico
+    Tuning de desempenho
+    SQM no gateway
+    Roaming entre APs

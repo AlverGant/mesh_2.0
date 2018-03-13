@@ -46,8 +46,8 @@ sudo apt install -y apache2 binutils bridge-utils build-essential \
 byacc ethtool expect fping g++ gcc git graphviz htop imagemagick \
 ipmitool iw libapache2-mod-php7.0 libcap-dev libgps-dev libncurses5-dev \
 libnl-3-dev libnl-genl-3-dev libpcap-dev libreadline-dev make mtr-tiny \
-mysql-client openjdk-7-jre openssh-server php7.0-cli php7.0-gd php7.0-json \
-php7.0-mcrypt php7.0-mysql php7.0-mysqli php-pear python-dev \
+mysql-client openjdk-8-jre openssh-server php7.0-cli php7.0-gd php7.0-json \
+php7.0-mcrypt php7.0-mysql php-pear python-dev \
 python-mysqldb python-paste python-pastedeploy python-pip python-setuptools \
 python-twisted rrdtool snmp subversion unzip vim wget whois wireless-tools
 

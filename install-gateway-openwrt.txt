@@ -1,0 +1,41 @@
+# Openwrt Gateway Compile
+git clone http://git.lede-project.org/source.git
+cd source
+git checkout v17.01.4
+./scripts/feeds update -a
+./scripts/feeds install -a
+make defconfig
+make menuconfig
+# Target system - x86
+# Subtarget - x86_64
+# Target Profile - generic
+# Target images - ext4
+# Target images - squashfs
+# Target images - pad images to filesystem size
+# Target images - gzip images
+# Target images - kernel partition size 64MB
+# Target images - root filesystem partition size 1024MB
+# Base system - ca-certificates
+# Administration - htop
+# Kernel modules - block devices - kmod-scsi-cdrom
+# Kernel modules - file systems - kmod-fs-ext4
+# Kernel modules - network support - kmod-batman-adv (enable verbose logging)
+# kernel modules - usb support - kmod-usb-core
+# kernel modules - usb support - kmod-usb-ohci
+# kernel modules - usb support - kmod-usb2
+# Luci - collections - luci-ssl-openssl
+# Luci - applications - luci-app-adblock
+# Luci - applications - luci-app-sqm
+# Network - filetransfer - wget
+# Network - routing & redirection - ip full
+# Network - alfred (enable vis - enable autogeneration bathosts)
+# Network - batctl
+# Network - bmon
+# Network - ethtool
+# Network - iperf
+# Network - snmpd
+# Network - tcpdump
+# SAVE AND EXIT
+
+
+make -j"${nproc}" V=s
