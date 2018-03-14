@@ -84,6 +84,7 @@ function substituteVariables(){
 		sed -i "s/\$interface_mesh_name/${mesh_config[interface_mesh_name]}/g" "$files"
 		sed -i "s/\$interface_ifname0/${mesh_config[interface_ifname0]}/g" "$files"
 		sed -i "s/\$interface_ifname1/${mesh_config[interface_ifname1]}/g" "$files"
+		sed -i "s/\$batman_interfaces/${batman_interfaces[${devicetype[$hostname]}]}/g" "$files"
 		sed -i "s/\$ip_start/${net_config[ip_start]}/g" "$files"
 		sed -i "s/\$number_of_ips/${net_config[number_of_ips]}/g" "$files"
 		sed -i "s/\$leasetime/${net_config[leasetime]}/g" "$files"

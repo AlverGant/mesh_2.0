@@ -259,3 +259,7 @@ sudo bash -c 'cat >> /etc/cron.d/batman-monitor << "END"
 # Run housekeeping script daily for rrds, ports, orphaned entries in the database and performance data
 47 4 * * * root /opt/observium/housekeeping.php -yrptb >> /dev/null 2>&1
 END'
+
+# Enable rc.local
+sudo systemctl enable rc-local.service
+sudo reboot

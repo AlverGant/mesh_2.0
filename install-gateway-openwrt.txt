@@ -23,6 +23,7 @@ make menuconfig
 # kernel modules - usb support - kmod-usb-core
 # kernel modules - usb support - kmod-usb-ohci
 # kernel modules - usb support - kmod-usb2
+# kernel modules - usb support - kmod-usb-hid
 # Luci - collections - luci-ssl-openssl
 # Luci - applications - luci-app-adblock
 # Luci - applications - luci-app-sqm

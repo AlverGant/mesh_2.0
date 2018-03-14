@@ -1,5 +1,5 @@
 config 'mesh' '$interface_mesh_name'
-	option '$interface_ifname0 $interface_ifname1'
+	option '$batman_interfaces'
 	option 'aggregated_ogms' '1'
 	option 'ap_isolation' '0'
 	option 'bonding' '0'
