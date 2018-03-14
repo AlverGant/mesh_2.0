@@ -1,0 +1,20 @@
+config system
+	option ttylogin '0'
+	option log_size '64'
+	option hostname $hostname
+	option timezone 'BRT3BRST,M10.3.0/0,M2.3.0/0'
+	option zonename 'America/Sao Paulo'
+	option log_ip $batman_monitor_ip
+	option conloglevel '7'
+	option log_size '64'
+	option urandom_seed '0'
+
+config timeserver 'ntp'
+	option enabled '1'
+	list server '0.lede.pool.ntp.org'
+	list server '1.lede.pool.ntp.org'
+	list server '2.lede.pool.ntp.org'
+	list server '3.lede.pool.ntp.org'
+	option enable_server '0'
+
+
