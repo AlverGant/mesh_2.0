@@ -43,16 +43,12 @@ config switch_vlan
 config interface $interface_name
 	option mesh $interface_mesh_name
 	option proto 'batadv'
-	option mtu '1560'
+	option mtu '1500'
 	option 'routing_algo' $batman_routing_algo
 
-config interface 'eth0'
-	option ifname 'eth0'
-	option mtu '1560'
-
 config interface 'wired_mesh_port'
-	option ifname 'eth0.2'
-	option mtu '1560'
+	option ifname 'eth0.3'
+	option mtu '1500'
 	option proto 'none'
 
 config switch_vlan
