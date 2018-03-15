@@ -12,5 +12,5 @@ ln -nsf /tmp/resolv.conf.auto /etc/resolv.conf
 /bin/sleep 1
 /usr/sbin/batctl if add adhoc1
 /bin/sleep 1
-/usr/sbin/batctl if add eth0.3
+/usr/sbin/batctl if add eth0.5
 exit 0
