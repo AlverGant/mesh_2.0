@@ -107,6 +107,8 @@ function substituteVariables(){
 		sed -i "s/\$dynamicdhcp/${net_config[dynamicdhcp]}/g" "$files"
 		sed -i "s/\$nasid/${nasid}/g" "$files"
 		sed -i "s/\$r1_key_holder/${r1_key_holder}/g" "$files"
+		sed -i "s/\$max_download_speed_internet_link_kbps/${max_download_speed_internet_link_kbps}/g" "$files"
+		sed -i "s/\$max_upload_speed_internet_link_kbps/${max_upload_speed_internet_link_kbps}/g" "$files"
 	done
 }
 
