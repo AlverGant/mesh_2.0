@@ -136,3 +136,11 @@ config rule 'luci_wan'
 	option target 'ACCEPT'
 	option proto 'tcp'
 	option dest_port '80'
+
+config rule 'lucissl_wan'
+	option name 'https from wan to router'
+	option src 'wan'
+	option target 'ACCEPT'
+	option proto 'tcp'
+	option dest_port '443'
+
