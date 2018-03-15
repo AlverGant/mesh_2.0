@@ -12,6 +12,13 @@ config zone
 	option forward 'ACCEPT'
 
 config zone
+        option name 'lan'
+        option input 'ACCEPT'
+        option output 'ACCEPT'
+        option forward 'ACCEPT'
+        option network 'lan wired_mesh_port'
+
+config zone
 	option name 'wan'
 	list network 'wan'
 	list network 'wan6'
