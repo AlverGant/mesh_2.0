@@ -13,4 +13,6 @@ ln -nsf /tmp/resolv.conf.auto /etc/resolv.conf
 /usr/sbin/batctl if add adhoc1
 /bin/sleep 1
 /usr/sbin/batctl if add eth0.3
+# Override eth0.3 throughput to 100Mbits/s
+echo 100000 > /sys/class/net/eth0.3/batman_adv/throughput_override
 exit 0
